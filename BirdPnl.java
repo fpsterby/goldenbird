@@ -7,15 +7,19 @@ import javax.swing.JPanel;
 public class BirdPnl extends JPanel implements Runnable {
     Thread t;
     Clicks clicks = new Clicks();
+    Keys k = new Keys();
+
     final double phi = (1 + Math.sqrt(5)) / 2;
     final int width = 800, height = 600; 
     final double thetaChange = 0.15;
-
-
+    
     List<Bird> birds = new ArrayList<>();
+    List<Bird> birdsToRemove = new ArrayList<>();
+    
     public BirdPnl(){
         this.setDoubleBuffered(true);
         this.addMouseListener(clicks);
+        this.addKeyListener(k);
         this.setPreferredSize(new Dimension(width,height));
         this.setBackground(Color.BLACK);
         this.setFocusable(true);
@@ -30,19 +34,27 @@ public class BirdPnl extends JPanel implements Runnable {
     public void run() {
         while (t != null){
             checkControls();
-            
-            for (Bird bird : birds) {
-                bird.angle += thetaChange;
-                double r = Math.pow(phi, 2*bird.angle / Math.PI);
-                bird.x = bird.startx + r * Math.cos(bird.angle);
-                bird.y = bird.starty + r * Math.sin(bird.angle);
-            }
-
+            update();
             repaint();
             sleep();
         }
     }
     
+    public void update(){
+        for (Bird bird : birds) {
+                bird.angle += thetaChange;
+                double r = Math.pow(phi, 2*bird.angle / Math.PI);
+                bird.x = bird.startx + r * Math.cos(bird.angle);
+                bird.y = bird.starty + r * Math.sin(bird.angle);
+                if (r > Math.pow(Math.pow(height, 2) + Math.pow(width, 2), 0.5))
+                    birdsToRemove.add(bird);
+            }
+            for (Bird bird : birdsToRemove) {
+                birds.remove(bird);
+            } birdsToRemove.clear();
+            
+    }
+
     public void sleep(){
         try {
             Thread.sleep((long) 1000 / 60);
@@ -56,16 +68,20 @@ public class BirdPnl extends JPanel implements Runnable {
             birds.add(new Bird(clicks.x, clicks.y));
             clicks.clicked = false;
         }
+
+        if (k.l){
+            System.out.println(birds.size());
+            k.l = false;
+        }
     }
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
-        g2.setColor(Color.MAGENTA);
+        // g2.setColor(Color.MAGENTA);
         for (Bird bird : birds) {
-            // g2.drawArc((int) bird.x, (int) bird.y, 10,10, 0, 110);
+            g2.setColor(Color.getHSBColor((float) (1 / bird.angle), 1, 1));
             g2.fillOval((int) bird.x, (int) bird.y, 10,10);
-            // System.out.println(birds.size());
         }
         g2.dispose();
     }
