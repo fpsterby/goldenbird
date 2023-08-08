@@ -1,6 +1,6 @@
 public class Bird {
-    double x;
-    double y;
+    double x,y;
+    final double startx,starty;
     double angle = 0;
 
     public Bird(){
@@ -8,7 +8,7 @@ public class Bird {
     }
 
     public Bird(double x, double y){
-        this.x = x;
-        this.y = y;
+        this.startx = x;
+        this.starty = y;
     }
 }

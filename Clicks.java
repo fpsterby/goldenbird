@@ -5,18 +5,17 @@ import java.awt.event.MouseListener;
 
 public class Clicks implements MouseListener {
     int x, y;
-    boolean clicked;
+    boolean clicked = false;
     @Override
     public void mouseClicked(MouseEvent e) {
-        
+        x = e.getX();
+        y = e.getY();
+        System.out.println("click" + x + " " + y);
+        clicked = true;
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-x = e.getX();
-        y = e.getY();
-        System.out.println("click" + x + " " + y);
-        clicked = true;
     }
 
     @Override

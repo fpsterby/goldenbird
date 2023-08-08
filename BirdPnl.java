@@ -9,6 +9,8 @@ public class BirdPnl extends JPanel implements Runnable {
     Clicks clicks = new Clicks();
     final double phi = (1 + Math.sqrt(5)) / 2;
     final int width = 800, height = 600; 
+    final double thetaChange = 0.15;
+
 
     List<Bird> birds = new ArrayList<>();
     public BirdPnl(){
@@ -30,10 +32,10 @@ public class BirdPnl extends JPanel implements Runnable {
             checkControls();
             
             for (Bird bird : birds) {
-                bird.angle += 0.1;
+                bird.angle += thetaChange;
                 double r = Math.pow(phi, 2*bird.angle / Math.PI);
-                bird.x += r * Math.cos(bird.angle);
-                bird.y += r * Math.sin(bird.angle);
+                bird.x = bird.startx + r * Math.cos(bird.angle);
+                bird.y = bird.starty + r * Math.sin(bird.angle);
             }
 
             repaint();
@@ -43,13 +45,14 @@ public class BirdPnl extends JPanel implements Runnable {
     
     public void sleep(){
         try {
-            Thread.sleep((long) 1000 / 5);
+            Thread.sleep((long) 1000 / 60);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
     public void checkControls(){
-        if (clicks.clicked = true){
+        if (clicks.clicked == true){
+            System.out.println("beep");
             birds.add(new Bird(clicks.x, clicks.y));
             clicks.clicked = false;
         }
@@ -62,7 +65,7 @@ public class BirdPnl extends JPanel implements Runnable {
         for (Bird bird : birds) {
             // g2.drawArc((int) bird.x, (int) bird.y, 10,10, 0, 110);
             g2.fillOval((int) bird.x, (int) bird.y, 10,10);
-            System.out.println(bird.x + " " +bird.y);
+            // System.out.println(birds.size());
         }
         g2.dispose();
     }
